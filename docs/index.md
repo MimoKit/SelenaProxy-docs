@@ -36,9 +36,9 @@ features:
     link: /guide/accounts
     linkText: 管理账号
   - title: WebUI
-    details: 在浏览器中管理供应商、白名单、节点策略和账号链接。
+    details: 在浏览器中管理供应商、白名单、节点策略和账号链接，也可直接体验静态演示。
     link: /guide/webui
-    linkText: 页面预览
+    linkText: 在线体验
   - title: 访问范围
     details: 使用目标域名和端口白名单限制代理用途，未启用账号拒绝访问。
     link: /guide/configuration
@@ -49,9 +49,24 @@ features:
     linkText: 选择部署方式
 ---
 
-## WebUI 一览
+## WebUI 在线体验
 
-![SelenaProxy WebUI 总览](/images/overview.jpg)
+无需部署即可直接操作 WebUI。这里使用的是纯静态模拟数据，不连接真实代理服务，填写和保存的内容也不会上传。
+
+<div class="webui-demo-frame webui-demo-frame-home">
+  <iframe
+    src="/SelenaProxy-docs/webui-demo/"
+    title="SelenaProxy WebUI 静态交互演示"
+    loading="lazy"
+    referrerpolicy="no-referrer"
+  ></iframe>
+</div>
+
+<p class="webui-demo-open">
+  <a href="/SelenaProxy-docs/webui-demo/" target="_blank" rel="noopener noreferrer">在新窗口打开完整演示 →</a>
+  ·
+  <a href="/SelenaProxy-docs/guide/webui">查看 WebUI 使用说明 →</a>
+</p>
 
 <div class="doc-cards">
   <div class="doc-card">

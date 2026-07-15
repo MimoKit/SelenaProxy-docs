@@ -84,6 +84,10 @@
   border: 0;
 }
 
+.webui-demo-frame-home {
+  margin-top: 20px;
+}
+
 .webui-demo-open {
   margin-top: 12px !important;
   text-align: center;
