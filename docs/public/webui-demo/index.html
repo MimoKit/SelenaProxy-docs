@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SelenaProxy · 缘纺祈糸</title>
+    <link rel="icon" type="image/png" href="./assets/selena-avatar.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./usage.css" />
+  </head>
+  <body>
+    <div class="demo-banner" role="status">
+      <strong>交互演示</strong>
+      <span>数据均为模拟，不连接真实代理服务；刷新页面会恢复默认状态。</span>
+    </div>
+    <div class="layout" id="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img class="selena-avatar" src="./assets/selena-avatar.png" alt="" />
+          <div><strong>SELENA</strong><small>代理管理</small></div>
+        </div>
+        <nav>
+          <button class="nav active" data-view="overview">总览</button>
+          <button class="nav" data-view="nodes">节点</button>
+          <button class="nav" data-view="accounts">账号</button>
+          <button class="nav" data-view="links">链接</button>
+          <button class="nav" data-view="logs">日志</button>
+          <button class="nav" data-view="config">设置</button>
+        </nav>
+        <div class="connection">
+          <i id="connection-dot"></i><span id="connection-text">正在连接</span>
+        </div>
+      </aside>
+
+      <main>
+        <header>
+          <div>
+            <h1 id="view-title">总览</h1>
+            <p id="updated-at">正在读取状态...</p>
+          </div>
+          <div class="header-actions">
+            <div class="mode">
+              <span>提取策略</span><strong>按需提取</strong>
+            </div>
+            <button class="secondary" id="reset-demo" type="button">
+              重置演示
+            </button>
+          </div>
+        </header>
+
+        <section class="view active" id="view-overview">
+          <div class="notice">
+            <strong>按需提取</strong
+            ><span>收到请求时才取代理，平时不会消耗套餐。</span>
+          </div>
+          <div class="stats">
+            <article>
+              <span>可用代理</span><strong id="healthy">0</strong
+              ><small>现在可以直接使用</small>
+            </article>
+            <article>
+              <span>正在连接</span><strong id="active">0</strong
+              ><small>当前正在转发</small>
+            </article>
+            <article>
+              <span>提取次数</span><strong id="fetched">0</strong
+              ><small>调用供应商 API</small>
+            </article>
+            <article>
+              <span>成功请求</span><strong id="success">0</strong
+              ><small>已经完成</small>
+            </article>
+            <article>
+              <span>失败请求</span><strong id="failed">0</strong
+              ><small>没有完成</small>
+            </article>
+            <article>
+              <span>代理请求</span><strong id="request-total">0</strong
+              ><small>收到的全部请求</small>
+            </article>
+            <article>
+              <span>代理流量</span><strong id="traffic-total">0 B</strong
+              ><small>上传和下载合计</small>
+            </article>
+            <article>
+              <span>代理账号</span><strong id="account-total">0</strong
+              ><small>已经添加的账号</small>
+            </article>
+          </div>
+          <section class="panel usage-panel">
+            <div class="panel-head">
+              <div>
+                <h2>用量统计</h2>
+              </div>
+              <span id="metrics-date">今日</span>
+            </div>
+            <div class="usage-grid">
+              <div>
+                <h3>今日</h3>
+                <dl id="metrics-today"></dl>
+              </div>
+              <div>
+                <h3>累计</h3>
+                <dl id="metrics-total"></dl>
+              </div>
+            </div>
+          </section>
+          <div class="split">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>最近代理节点</h2>
+                  <p>当前可以使用的代理</p>
+                </div>
+                <button class="link" data-go="nodes">查看全部</button>
+              </div>
+              <div id="node-preview" class="empty">
+                当前没有可用节点
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>最近事件</h2>
+                  <p>刚刚发生了什么</p>
+                </div>
+                <button class="link" data-go="logs">查看日志</button>
+              </div>
+              <div id="event-preview" class="event-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="view-nodes">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>代理节点</h2>
+                <p>当前代理和剩余使用时间</p>
+              </div>
+              <span id="node-count">0 个节点</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>地址</th>
+                    <th>安全剩余</th>
+                    <th>活动连接</th>
+                    <th>累计连接</th>
+                    <th>失败</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody id="node-table"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="view-accounts">
+          <form id="accounts-form">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>账号管理</h2>
+                  <p>给不同的机器人或服务器分别创建账号</p>
+                </div>
+                <button class="secondary" id="add-account" type="button" disabled>
+                  添加账号
+                </button>
+              </div>
+              <div class="account-list" id="account-list"></div>
+            </section>
+            <div class="savebar">
+              <span id="account-save-state">账号没有修改</span>
+              <button class="primary" type="submit" disabled>保存账号</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="view" id="view-links">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>代理链接</h2>
+                <p>复制后填到需要使用代理的程序里</p>
+              </div>
+              <span id="link-account-count">0 个账号</span>
+            </div>
+            <div class="link-list" id="link-list"></div>
+          </section>
+          <section class="panel account-usage-panel" id="account-usage-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2 id="account-usage-title">账号数据</h2>
+                <p id="account-usage-subtitle"></p>
+              </div>
+              <span id="account-metrics-date">今日</span>
+            </div>
+            <div class="usage-grid">
+              <div>
+                <h3>今日</h3>
+                <dl id="account-metrics-today"></dl>
+              </div>
+              <div>
+                <h3>累计</h3>
+                <dl id="account-metrics-total"></dl>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="view-logs">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>实时请求日志</h2>
+                <p>每次请求的目标、节点和结果</p>
+              </div>
+              <div class="filters">
+                <select id="log-level">
+                  <option value="all">全部级别</option>
+                  <option value="info">正常</option>
+                  <option value="warning">警告</option>
+                  <option value="error">错误</option></select
+                ><button class="secondary" id="clear-screen">
+                  清空当前显示
+                </button>
+              </div>
+            </div>
+            <div id="log-list" class="log-list"></div>
+          </section>
+        </section>
+
+        <section class="view" id="view-config">
+          <form id="config-form">
+            <section class="panel form-section">
+              <div class="panel-head">
+                <div>
+                  <h2>供应商</h2>
+                  <p>填写供应商给你的提取接口</p>
+                </div>
+              </div>
+              <label class="wide"
+                ><span>多米 API 地址</span>
+                <div class="secret">
+                  <input
+                    id="provider-api"
+                    type="password"
+                    aria-label="多米 API 地址"
+                    autocomplete="off"
+                  /><button
+                    type="button"
+                    id="toggle-api"
+                    aria-label="显示多米 API 地址"
+                  >
+                    显示
+                  </button>
+                </div></label
+              >
+              <div class="form-grid">
+                <label
+                  ><span>最短提取间隔（秒）</span
+                  ><input
+                    id="fetch-interval"
+                    type="number"
+                    min="0"
+                    max="3600"
+                    step="0.1"
+                    required /></label
+                ><label
+                  ><span>单次提取数量</span
+                  ><input
+                    id="fetch-batch"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    required /></label
+                ><label
+                  ><span>供应商单次上限</span
+                  ><input
+                    id="fetch-max"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    required /></label
+                ><label
+                  ><span>请求超时（秒）</span
+                  ><input
+                    id="provider-timeout"
+                    type="number"
+                    min="0.1"
+                    max="300"
+                    step="0.1"
+                    required
+                /></label>
+                <label
+                  ><span>日志级别</span
+                  ><select id="config-log-level" required>
+                    <option value="DEBUG">DEBUG</option>
+                    <option value="INFO">INFO</option>
+                    <option value="WARNING">WARNING</option>
+                    <option value="ERROR">ERROR</option>
+                  </select></label
+                >
+              </div>
+            </section>
+            <section class="panel form-section">
+              <div class="panel-head">
+                <div>
+                  <h2>短效节点策略</h2>
+                  <p>
+                    控制代理可以用多久、失败几次后换掉
+                  </p>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label
+                  ><span>保守存活时间（秒）</span
+                  ><input
+                    id="minimum-ttl"
+                    type="number"
+                    min="2"
+                    max="86400"
+                    required /></label
+                ><label
+                  ><span>到期安全余量（秒）</span
+                  ><input
+                    id="expire-safety"
+                    type="number"
+                    min="0"
+                    max="86400"
+                    required /></label
+                ><label
+                  ><span>最大失败次数</span
+                  ><input
+                    id="max-failures"
+                    type="number"
+                    min="1"
+                    max="100"
+                    required /></label
+                ><label
+                  ><span>单节点最大并发</span
+                  ><input id="max-concurrency" type="number" min="1" max="1000" required
+                /></label>
+              </div>
+            </section>
+            <section class="panel form-section">
+              <div class="panel-head">
+                <div>
+                  <h2>代理入口</h2>
+                  <p>程序提供代理服务的地址和端口</p>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label
+                  ><span>监听地址</span
+                  ><input id="server-host" required /></label
+                ><label
+                  ><span>监听端口</span
+                  ><input
+                    id="server-port"
+                    type="number"
+                    min="1"
+                    max="65535"
+                    required /></label
+                ><label
+                  ><span>对外访问地址</span
+                  ><input
+                    id="server-public-host"
+                    autocomplete="off"
+                    placeholder="IP 或域名" /></label
+                ><label
+                  ><span>连接超时（秒）</span
+                  ><input
+                    id="connect-timeout"
+                    type="number"
+                    min="0.1"
+                    max="300"
+                    step="0.1"
+                    required /></label
+                ><label
+                  ><span>隧道空闲超时（秒）</span
+                  ><input
+                    id="idle-timeout"
+                    type="number"
+                    min="1"
+                    max="86400"
+                    step="0.1"
+                    required /></label
+                ><label
+                  ><span>最大轮换次数</span
+                  ><input
+                    id="connect-retries"
+                    type="number"
+                    min="1"
+                    max="10"
+                    required /></label
+                ><label
+                  ><span>允许端口（逗号分隔）</span
+                  ><input id="allowed-ports" required /></label
+                ><label class="wide"
+                  ><span>允许域名（每行一个，支持 *.example.com）</span
+                  ><textarea id="allowed-hosts" rows="6" required></textarea>
+                </label>
+              </div>
+            </section>
+            <div class="savebar">
+              <span id="save-state">配置没有修改</span
+              ><button class="primary" type="submit">保存配置</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
