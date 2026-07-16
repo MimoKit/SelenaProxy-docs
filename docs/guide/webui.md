@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 # WebUI
 
 WebUI 默认运行在 `17892` 端口。首次进入需要用启动日志里的 Token 创建管理员，之后使用管理员账号登录。
@@ -6,7 +10,7 @@ WebUI 默认运行在 `17892` 端口。首次进入需要用启动日志里的 T
 
 下面是 WebUI 的纯静态交互演示。数据、账号、节点和代理地址均为虚构示例，页面不会连接 SelenaProxy 后端，也不会上传或持久化你填写的内容。
 
-<div class="webui-demo-frame">
+<div class="webui-demo-frame webui-guide-frame">
   <iframe
     src="/SelenaProxy-docs/webui-demo/"
     title="SelenaProxy WebUI 静态交互演示"

@@ -88,6 +88,12 @@
   margin-top: 20px;
 }
 
+@media (min-width: 960px) {
+  .webui-guide-frame {
+    width: min(1180px, calc(100vw - var(--vp-sidebar-width, 272px) - 48px));
+  }
+}
+
 .webui-demo-open {
   margin-top: 12px !important;
   text-align: center;
